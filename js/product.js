@@ -1,8 +1,6 @@
-let urlCourante = document.location.href;
-// console.log(urlCourante);
-let urlSplit = urlCourante.split("=");
-let id = urlSplit[1];
+let id = new URLSearchParams(window.location.search).get("id");
 // console.log(id);
+
 const addToCart = document.getElementById('addToCart');
 
 
