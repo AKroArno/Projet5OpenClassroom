@@ -9,7 +9,7 @@ let ImgDisplay = imgDom.children[0];
 const title = document.getElementById('title');
 const price = document.getElementById('price');
 const description = document.getElementById('description');
-const colors = document.getElementById('colors');
+const colorsKanap = document.getElementById('colors');
 
 // let selectedColor = colors.options[colors.selectedIndex].value;
 
@@ -38,14 +38,16 @@ function creatPage (tag) {
 
   tag.colors.forEach(color => {
     let option = new Option(color,color);
-    colors.append(option)
+    colorsKanap.append(option)
   });
 };
+
+colorsKanap.addEventListener('change', console.log(colorsKanap.value));
 
 function addBasket () {
   localStorage.id = id;
   localStorage.quantity = quantity.value;
-  localStorage.color = colors.value;
+  localStorage.color = colorsKanap.value;
 };
 
-addToCart.addEventListener('click', addBasket())
+addToCart.addEventListener('click', console.log(colorsKanap.value));
