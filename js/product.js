@@ -42,12 +42,19 @@ function creatPage (tag) {
   });
 };
 
-colorsKanap.addEventListener('change', console.log(colorsKanap.value));
+// colorsKanap.addEventListener('change', () => {
+//   console.log(colorsKanap.value)
+// });
 
 function addBasket () {
-  localStorage.id = id;
-  localStorage.quantity = quantity.value;
-  localStorage.color = colorsKanap.value;
+  localStorage.setItem('id', id) ;
+  localStorage.setItem('quantity', quantity.value);
+  localStorage.setItem('color', colorsKanap.value);
 };
 
-addToCart.addEventListener('click', console.log(colorsKanap.value));
+// addToCart.addEventListener('click', () => {
+//   console.log(quantity.value);
+// });
+addToCart.addEventListener('click', () => {
+  addBasket()
+});
