@@ -45,16 +45,25 @@ function creatPage (tag) {
 // colorsKanap.addEventListener('change', () => {
 //   console.log(colorsKanap.value)
 // });
+let basketKanaps = [];
 
 function addBasket () {
-  localStorage.setItem('id', id) ;
-  localStorage.setItem('quantity', quantity.value);
-  localStorage.setItem('color', colorsKanap.value);
+  const selectedKanap = {
+    KanapId: id,
+    kanapQuantity: quantity.value,
+    kanapColor: colorsKanap.value
+  };
+  basketKanaps.push(selectedKanap);
 };
 
 // addToCart.addEventListener('click', () => {
 //   console.log(quantity.value);
 // });
 addToCart.addEventListener('click', () => {
-  addBasket()
+  addBasket();
+  console.log(basketKanaps);
 });
+
+// quantity.addEventListener('change', (e) => {
+//   price.textContent = price.innerText * e.target.value;
+// });
