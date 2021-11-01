@@ -2,7 +2,7 @@
 
 const form = document.querySelector('form');
 const inputs = document.querySelectorAll('input');
-// const firstName, lastName, adress, city, email;
+let firstName, lastName, address, city, email;
 // const local = localStorage.getItem(id);
 // const selectedKanap = JSON.parse(localStorage.getItem(id));
 // console.log(selectedKanap);
@@ -103,6 +103,7 @@ const inputs = document.querySelectorAll('input');
 
 function errorMsg(id, message, valid) {
   const container = document.getElementById(id);
+  // console.log(id);
   const errorText = document.getElementById(id + 'ErrorMsg');
   if(!valid) {
     errorText.textContent = message;
@@ -112,33 +113,44 @@ function errorMsg(id, message, valid) {
 };
 function nameChecker(value, tag, name) {
   if (value.length > 0 && (value.length < 2 || value.length > 20)){
-    errorMsg(name, `Veuillez entrée un  ${tag}  valide`);
-    name = null;
+    errorMsg(name, `Veuillez entrée un  ${tag}  valide`, false);
+    // name = null;
   } else if (!value.match(/^[a-zA-Z-]+$/)) {
-    errorMsg(name, `'Le ${tag} ne doit pas contenir de caractères spéciaux'`);
-    name = null;
+    errorMsg(name, `Le ${tag} ne doit pas contenir de caractères spéciaux`, false);
+    // name = null;
   } else {
     errorMsg(name, "", true);
-    name = value;
+    return true;
   }
+  return false;
 };
 function adressChecker(value) {
   if (!value.match(/^[a-zA-Z0-9-]+$/)) {
-    errorMsg('adress', 'adresse invalide');
-    adress = null;
+    errorMsg('adress', 'adresse invalide', false);
+    // address = null;
   } else {
-    errorMsg('adress', "", true);
-    adress = value;
+    errorMsg('address', "", true);
+    return true;
   }
+  return false;
 };
 function emailChecker(value) {
   if (!value.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
-    errorMsg('email', 'adresse mail invalide');
-    email = null;
+    errorMsg('email', 'adresse mail invalide', false);
+    // email = null;
   } else {
     errorMsg('email', "", true);
-    email = value;
+    return true;
   }
+  return false;
+};
+
+let data = {
+  firstName: firstName,
+  lastName: lastName,
+  address: address,
+  city: city,
+  email: email,
 };
 
 inputs.forEach((input) => {
@@ -164,22 +176,22 @@ inputs.forEach((input) => {
 });
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  console.log('ok');
-  if (firstName && lastName && adress && city && email) {
-    const data = {
-      firstName: firstName,
-      lastName: lastName,
-      adress: adress,
-      city: city,
-      email: email,
-    };
-    console.log(data);
-   }
+  console.log(e);
+  e.forEach(input => {
+    if (input == true) {
+      console.log(input);
+    }
+  })
+  // if (firstName && lastName && address && city && email) {
+  //   console.log(data);
+  //  } else {
+  //    console.log('erreur');
+  //  }
 });
 
-fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
-  kanaps.map(kanap => {
-    console.log(kanap);
-  })
-});
+// fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
+//   kanaps.map(kanap => {
+//     console.log(kanap);
+//   })
+// });
 

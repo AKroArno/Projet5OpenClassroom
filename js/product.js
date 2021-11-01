@@ -45,25 +45,48 @@ function creatPage (tag) {
 // colorsKanap.addEventListener('change', () => {
 //   console.log(colorsKanap.value)
 // });
-let basketKanaps = [];
+function basketCheck(array) {
+  array.forEach((inArray, kanap) => {
+      if (inArray.kanapID === kanap._id && inArray.kanapColor === kanap.color) {
+    array.kanapQuantity += parseInt(kanap.quantity);
+    } else {
+      array.push(kanap);
+    };
+  })
+};
 
-function addBasket () {
-  const selectedKanap = {
+function addBasket (tag) {
+  if (!localStorage.getItem("basket")) {
+    let basketKanaps = [];
+    basketKanaps.push(tag);
+    localStorage.setItem("basket", JSON.stringify(basketKanaps))
+  } else {
+    basketKanaps = JSON.parse(localStorage.getItem("basket"));
+    basketCheck(basketKanaps);
+    console.log(basketKanaps);
+    localStorage.setItem("basket", JSON.stringify(basketKanaps));
+  }
+};
+
+addToCart.addEventListener('click', () => {
+  let selectedKanap = {
     KanapId: id,
     kanapQuantity: quantity.value,
     kanapColor: colorsKanap.value
-  };
-  basketKanaps.push(selectedKanap);
-};
-
-// addToCart.addEventListener('click', () => {
-//   console.log(quantity.value);
-// });
-addToCart.addEventListener('click', () => {
-  addBasket();
-  console.log(basketKanaps);
+  };  
+  addBasket(selectedKanap);
 });
 
-// quantity.addEventListener('change', (e) => {
-//   price.textContent = price.innerText * e.target.value;
-// });
+// let basket = localStorage.getItem("basketKanaps")
+
+
+
+// function basketExist () {
+//   if (!localStorage.getItem("basketKanaps")) {
+//     basket = [];
+//     basket.push(selectedKanap);
+//   } else {
+//     basket = JSON.parse(localStorage.getItem("basketKanaps"));
+//     let inBasket = kanapIn
+//   }
+// }
