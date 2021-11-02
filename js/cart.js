@@ -1,94 +1,107 @@
-
-
-const form = document.querySelector('form');
-const inputs = document.querySelectorAll('input');
+let form = document.querySelector('form');
+let inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
+console.log(inputs);
 let firstName, lastName, address, city, email;
-// const local = localStorage.getItem(id);
-// const selectedKanap = JSON.parse(localStorage.getItem(id));
-// console.log(selectedKanap);
-// let itemQuantity = localStorage.getItem('quantity');
-// let id = localStorage.getItem('id');
-// let colorKanap = localStorage.getItem('color');
-// console.log(itemQuantity);
-// console.log(id);
-// console.log(colorKanap);
+function getBasket() {
+  if(!localStorage.getItem("basket")) {
+    return false;
+  }
+  return JSON.parse(localStorage.getItem("basket"));
+}
+let basket = getBasket();
+// console.log(basket)
 
-// function creatBasket(tag) {
-//   let cartItem = document.getElementById('cart__items');
-//   let article = document.createElement('article');
-//   article.setAttribute('class', 'cart__item');
-//   article.setAttribute('data-id', product-ID);
+function creatBasket(tag, product) {
+  let article = document.createElement('article');
+  article.setAttribute('class', 'cart__item');
+  article.setAttribute('data-id', tag.kanapId);
 
-//   let cartItemImg = document.createElement('div');
-//   cartItemImg.setAttribute('class', 'cart__item__img');
+  let cartItemImg = document.createElement('div');
+  cartItemImg.setAttribute('class', 'cart__item__img');
 
-//   let img = document.createElement('img');
-//   img.setAttribute('src', tag.imageUrl);
-//   img.setAttribute('alt', tag.altTxt);
-//   img.setAttribute('width', 200);
-//   img.setAttribute('height', 200);
+  let img = document.createElement('img');
+  img.setAttribute('src', product.imageUrl);
+  img.setAttribute('alt', product.altTxt);
 
-//   let cartItemContent = document.createElement('div');
-//   cartItemContent.setAttribute('class', 'cart__item__content');
+  let cartItemContent = document.createElement('div');
+  cartItemContent.setAttribute('class', 'cart__item__content');
 
-//   let cartItemContentTitlePrice = document.createElement('div');
-//   cartItemContentTitlePrice.setAttribute('class', 'cart__item__content__title');
+  let cartItemContentTitlePrice = document.createElement('div');
+  cartItemContentTitlePrice.setAttribute('class', 'cart__item__content__title');
 
-//   let h2 = document.createElement('h2');
-//   h2.textContent = tag.price;
+  let newPrice = product.price * tag.kanapQuantity;
+  let h2 = document.createElement('h2');
+  h2.textContent = product.name;
 
-//   let pPrice = document.createElement('p');
-//   pPrice.textContent = tag.price;
+  let pPrice = document.createElement('p');
+  pPrice.textContent = newPrice + " €";
 
-//   let cartItemContentSettings = document.createElement('div');
-//   cartItemContentSettings.setAttribute('div', 'cart__item__content__settings');
+  let cartItemContentSettings = document.createElement('div');
+  cartItemContentSettings.setAttribute('div', 'cart__item__content__settings');
 
-//   let cartItemContentSettingsQuantity = document.createElement('div');
-//   cartItemContentSettingsQuantity.setAttribute('class', 'cart__item__content__settings__quantity');
+  let cartItemContentSettingsQuantity = document.createElement('div');
+  cartItemContentSettingsQuantity.setAttribute('class', 'cart__item__content__settings__quantity');
 
-//   let pQte = document.createElement('p');
+  let pQte = document.createElement('p');
+  pQte.textContent = "Qté : "
 
-//   let numberInput = document.createElement('input');
-//   numberInput.setAttribute('type', 'number');
-//   numberInput.setAttribute('class', 'itemQuantity');
-//   numberInput.setAttribute('name', 'itemQantity');
-//   numberInput.setAttribute('min', '1');
-//   numberInput.setAttribute('max', '100');
-//   numberInput.setAttribute('value', itemQuantity);
+  let numberInput = document.createElement('input');
+  numberInput.setAttribute('type', 'number');
+  numberInput.setAttribute('class', 'itemQuantity');
+  numberInput.setAttribute('name', 'itemQantity');
+  numberInput.setAttribute('min', '1');
+  numberInput.setAttribute('max', '100');
+  numberInput.setAttribute('value', tag.kanapQuantity);
 
-//   let cartItemContentSettingsDelete = document.createElement('div');
-//   cartItemContentSettingsDelete.setAttribute('class', 'cart__item__content__settings__delete');
+  numberInput.addEventListener('change', (e) => {
+    newPrice = e.target.value * product.price;
+  })
 
-//   let pDelete = document.createElement('p');
-//   pDelete.setAttribute('class', 'deleteItem');
-//   pDelete.textContent = 'Supprimer';
+  let cartItemContentSettingsDelete = document.createElement('div');
+  cartItemContentSettingsDelete.setAttribute('class', 'cart__item__content__settings__delete');
 
-//   cartItem.appendChild(article);
-//   article.appendChild(cartItem);
-//   cartItem.appendChild(cartItemImg);
-//   cartItemImg.appendChild(img);
-//   cartItem.appendChild(cartItemContent);
-//   cartItemContent.appendChild(cartItemContentTitlePrice);
-//   cartItemContentTitlePrice.appendChild(h2);
-//   cartItemContentTitlePrice.appendChild(pPrice);
-//   cartItemContent.appendChild(cartItemContentSettings);
-//   cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
-//   cartItemContentSettingsQuantity.appendChild(pQte);
-//   cartItemContentSettingsQuantity.appendChild(numberInput);
-//   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
-//   cartItemContentSettingsDelete.appendChild(pDelete);
+  let pDelete = document.createElement('p');
+  pDelete.setAttribute('class', 'deleteItem');
+  pDelete.textContent = 'Supprimer';
+
+  let cartItem = document.getElementById('cart__items');
+
+
+  cartItem.appendChild(article);
+  article.appendChild(cartItemImg);
+  cartItemImg.appendChild(img);
+  article.appendChild(cartItemContent);
+  cartItemContent.appendChild(cartItemContentTitlePrice);
+  cartItemContentTitlePrice.appendChild(h2);
+  cartItemContentTitlePrice.appendChild(pPrice);
+  cartItemContent.appendChild(cartItemContentSettings);
+  cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
+  cartItemContentSettingsQuantity.appendChild(pQte);
+  cartItemContentSettingsQuantity.appendChild(numberInput);
+  cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
+  cartItemContentSettingsDelete.appendChild(pDelete);
   
-// };
+  // let totalQuantity = document.getElementById("totalQuantity");
+  // basket.forEach(item => )
+  // totalQuantity = 
+  // let totalPrice = document.getElementById("totalPrice")
+  // console.log(document.querySelectorAll('input[type="number"]'));
+
+};
 
 
-// fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
-//   kanaps.map(kanap => {
-//     if (kanap._id === id) {
-//       creatBasket(kanap)
-//     };
-//   });
-// });
+fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
+  kanaps.map(kanap => {
+    // console.log(kanap);
 
+    basket.forEach(elem => {
+      if (elem.kanapId == kanap._id) {
+        creatBasket(elem, kanap)
+        console.log(elem);
+      }
+    })
+  })
+});
 
 
 
@@ -188,10 +201,3 @@ form.addEventListener('submit', (e) => {
   //    console.log('erreur');
   //  }
 });
-
-// fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
-//   kanaps.map(kanap => {
-//     console.log(kanap);
-//   })
-// });
-
