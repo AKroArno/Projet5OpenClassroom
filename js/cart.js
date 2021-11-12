@@ -1,27 +1,79 @@
 let form = document.querySelector('form');
 let inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
-console.log(inputs);
+// console.log(inputs);
 let firstName, lastName, address, city, email;
+// console.log(form);
+
+let h1 = document.querySelector('h1')
+
+// création de la fonction de récupération du localstorage
 function getBasket() {
   if(!localStorage.getItem("basket")) {
+    h1.textContent = "Votre panier est vide"
     return false;
   }
-  return JSON.parse(localStorage.getItem("basket"));
+  displayProduct();
 }
-let basket = getBasket();
-// console.log(basket)
 
-function creatBasket(tag, product) {
+// lancement de la recupération dans la variable basket
+getBasket();
+
+
+function displayProduct() {
+  let basket = JSON.parse(localStorage.getItem("basket"));
+  let products = [];
+  for (let i in basket) {
+    fetch('http://localhost:3000/api/products/' + basket[i].kanapId).then((res) => res.json()).then((kanap) => {
+      kanap.qty = basket[i].kanapQuantity;
+      kanap.colorSelected = basket[i].kanapColor;
+      products.push(kanap);
+      creatBasket(products[i], kanap)
+      calcul(kanap);
+    });
+  }
+
+};
+
+function calcul(kanap) {
+  let quantitySelected = document.querySelectorAll('input[type="number"]');
+  let totPrice = 0;
+  let totQuantity = 0;
+  quantitySelected.forEach(e => {
+    totPrice += parseInt(kanap.price) * parseInt(e.value);
+    totQuantity += parseInt(e.value);
+  });
+  let totalPrice = document.getElementById("totalPrice")
+  totalPrice.textContent = totPrice;
+  let totalQuantity = document.getElementById("totalQuantity");
+  totalQuantity.textContent = totQuantity;
+}
+
+
+
+
+// function modifBasket(tag) {
+//   basketKanaps = JSON.parse(localStorage.getItem("basket"));
+//   let newBasket = basketCheck(basketKanaps, tag);
+//   localStorage.setItem("basket", JSON.stringify(newBasket));
+// } 
+// quantityselected.addEventListener('change', (e) => {
+//   if (e.target.value >= 1) {
+
+//   }
+// }
+
+// fonction de la creation de page panier d'après le contenu du localstorage
+function creatBasket(local, api) {
   let article = document.createElement('article');
   article.setAttribute('class', 'cart__item');
-  article.setAttribute('data-id', tag.kanapId);
+  article.setAttribute('data-id', local.kanapId);
 
   let cartItemImg = document.createElement('div');
   cartItemImg.setAttribute('class', 'cart__item__img');
 
   let img = document.createElement('img');
-  img.setAttribute('src', product.imageUrl);
-  img.setAttribute('alt', product.altTxt);
+  img.setAttribute('src', api.imageUrl);
+  img.setAttribute('alt', api.altTxt);
 
   let cartItemContent = document.createElement('div');
   cartItemContent.setAttribute('class', 'cart__item__content');
@@ -29,12 +81,11 @@ function creatBasket(tag, product) {
   let cartItemContentTitlePrice = document.createElement('div');
   cartItemContentTitlePrice.setAttribute('class', 'cart__item__content__title');
 
-  let newPrice = product.price * tag.kanapQuantity;
   let h2 = document.createElement('h2');
-  h2.textContent = product.name;
+  h2.textContent = api.name + `(${local.colorSelected})`;
 
   let pPrice = document.createElement('p');
-  pPrice.textContent = newPrice + " €";
+  pPrice.textContent = api.price + " €";
 
   let cartItemContentSettings = document.createElement('div');
   cartItemContentSettings.setAttribute('div', 'cart__item__content__settings');
@@ -51,11 +102,10 @@ function creatBasket(tag, product) {
   numberInput.setAttribute('name', 'itemQantity');
   numberInput.setAttribute('min', '1');
   numberInput.setAttribute('max', '100');
-  numberInput.setAttribute('value', tag.kanapQuantity);
+  numberInput.setAttribute('value', local.qty);
+  numberInput.unitPrice = api.price;
 
-  numberInput.addEventListener('change', (e) => {
-    newPrice = e.target.value * product.price;
-  })
+
 
   let cartItemContentSettingsDelete = document.createElement('div');
   cartItemContentSettingsDelete.setAttribute('class', 'cart__item__content__settings__delete');
@@ -81,28 +131,36 @@ function creatBasket(tag, product) {
   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
   cartItemContentSettingsDelete.appendChild(pDelete);
   
-  // let totalQuantity = document.getElementById("totalQuantity");
-  // basket.forEach(item => )
-  // totalQuantity = 
-  // let totalPrice = document.getElementById("totalPrice")
+  // totalQuantity.textContent = parseInt(initialQuantity) + parseInt(selectedQuantity)
+
+  //   totalQuantity.textContent += number(item.kanapQuantity);
   // console.log(document.querySelectorAll('input[type="number"]'));
-
 };
+// let newQuantity; 
+// console.log(basket);
+// basket.forEach(elem => {
+//   newQuantity = selectedQuantity + elem.kanapQuantity;
+//   console.log(elem.kanapQuantity);
+// });
+// for (let i = 0; i < basket.length; i++) {
+//   if (newQuantity == 0) {
+//     let selectedQuantity = basket[i].kanapQuantity
+//     newQuantity = basket[i].kanapQuantity
+//   }
+// }
 
-
-fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
-  kanaps.map(kanap => {
+// fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
+//   kanaps.map(kanap => {
     // console.log(kanap);
 
-    basket.forEach(elem => {
-      if (elem.kanapId == kanap._id) {
-        creatBasket(elem, kanap)
-        console.log(elem);
-      }
-    })
-  })
-});
-
+// basket.forEach(elem => {
+//   if (elem.kanapId == kanap._id) {
+//     creatBasket(elem, kanap)
+//         // console.log(elem);
+//       }
+//     })
+//   })
+// });
 
 
 
@@ -189,12 +247,12 @@ inputs.forEach((input) => {
 });
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  console.log(e);
-  e.forEach(input => {
-    if (input == true) {
-      console.log(input);
-    }
-  })
+  console.log(e.target);
+  // e.forEach(input => {
+  //   if (input == true) {
+  //     console.log(input);
+  //   }
+  // })
   // if (firstName && lastName && address && city && email) {
   //   console.log(data);
   //  } else {

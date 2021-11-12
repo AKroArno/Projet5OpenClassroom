@@ -22,6 +22,7 @@ fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kana
   });
 });
 
+// création dynamique de la page en fonction du contenu du localStorage
 function creatPage (tag) {
   let kanapImg = document.createElement('img');
   kanapImg.setAttribute('src', tag.imageUrl);
@@ -41,11 +42,12 @@ function creatPage (tag) {
   });
 };
 
+// fonction test si le panier existe modifie le sinon créer le
 function basketCheck(basket, kanap) {
   let check = false;
   basket.forEach((product, item) => {
-      if (product.kanapId == item.kanapId && product.kanapColor == item.kanapColor) {
-      basket.kanapQuantity += parseInt(item.kanapQuantity);
+      if (product.kanapId == kanap.kanapId && product.kanapColor == kanap.kanapColor) {
+      product.kanapQuantity += parseInt(kanap.kanapQuantity);
       check = true;
     }
   })
@@ -55,22 +57,35 @@ function basketCheck(basket, kanap) {
   return basket;
 };
 
+// fonction comfirmation pop up
+function popupComfirm () {
+  if (window.confirm( `le produit a bien été ajouté au panier
+  Consulter le panier OK ou revenir à l'acceuil ANNULER`)){
+    window.location.href = "cart.html"
+  }else{
+    window.location.href = "index.html"
+  }
+}
+
+// definition de la fonction d'ajout au panier
 function addBasket (tag) {
   if (!localStorage.getItem("basket")) {
     let basketKanaps = [];
     basketKanaps.push(tag);
-    localStorage.setItem("basket", JSON.stringify(basketKanaps))
+    localStorage.setItem("basket", JSON.stringify(basketKanaps));
+    popupComfirm();
   } else {
     basketKanaps = JSON.parse(localStorage.getItem("basket"));
     let newBasket = basketCheck(basketKanaps, tag);
     localStorage.setItem("basket", JSON.stringify(newBasket));
+    popupComfirm();
   }
 };
-
+// evenement au click sur ajouter au panier
 addToCart.addEventListener('click', () => {
   let selectedKanap = {
     kanapId: id,
-    kanapQuantity: quantity.value,
+    kanapQuantity: parseInt(quantity.value),
     kanapColor: colorsKanap.value
   };  
   addBasket(selectedKanap);
