@@ -72,6 +72,7 @@ function addBasket (tag) {
   if (!localStorage.getItem("basket")) {
     let basketKanaps = [];
     basketKanaps.push(tag);
+    //transformation en format JSON et l'envoyer dans le localStorage 
     localStorage.setItem("basket", JSON.stringify(basketKanaps));
     popupComfirm();
   } else {

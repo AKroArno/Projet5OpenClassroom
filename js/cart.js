@@ -5,35 +5,43 @@ let firstName, lastName, address, city, email;
 // console.log(form);
 
 let h1 = document.querySelector('h1')
-
+console.log(localStorage.getItem("basket"));
 // création de la fonction de récupération du localstorage
 function getBasket() {
-  if(!localStorage.getItem("basket")) {
+  let stockProduct = JSON.parse(localStorage.getItem("basket"));
+  if(stockProduct === null || stockProduct == 0) {
     h1.textContent = "Votre panier est vide"
     return false;
   }
   displayProduct();
-}
 
-// lancement de la recupération dans la variable basket
+  // return JSON.parse(localStorage.getItem("basket"));
+} 
 getBasket();
-
+// lancement de la recupération dans la variable basket
+// console.log(basket);
 
 function displayProduct() {
   let basket = JSON.parse(localStorage.getItem("basket"));
   let products = [];
   for (let i in basket) {
-    fetch('http://localhost:3000/api/products/' + basket[i].kanapId).then((res) => res.json()).then((kanap) => {
-      kanap.qty = basket[i].kanapQuantity;
-      kanap.colorSelected = basket[i].kanapColor;
-      products.push(kanap);
-      creatBasket(products[i], kanap)
-      calcul(kanap);
+      fetch('http://localhost:3000/api/products/' + basket[i].kanapId).then((res) => res.json()).then((kanap) => {
+        kanap.qty = basket[i].kanapQuantity;
+        kanap.colorSelected = basket[i].kanapColor;
+        products.push(kanap);
+        creatBasket(products[i], kanap)
+        calcul(kanap);
+
+        supprimerArticle(basket);
+      // console.log(products[i]);
+      // supprimerArticle(deleteItem);
     });
   }
-
 };
+// let quantitySelected = document.querySelectorAll('input[type="number"]');
 
+
+// declaration de la fontion de calcul du panier
 function calcul(kanap) {
   let quantitySelected = document.querySelectorAll('input[type="number"]');
   let totPrice = 0;
@@ -46,10 +54,48 @@ function calcul(kanap) {
   totalPrice.textContent = totPrice;
   let totalQuantity = document.getElementById("totalQuantity");
   totalQuantity.textContent = totQuantity;
+
+};
+
+// declaration de la fonction supprimer l'article
+function supprimerArticle(element) {
+  let deleteItem = document.querySelectorAll(".deleteItem");
+  console.log(deleteItem);
+  for (let j = 0; j < deleteItem.length; j++){
+    deleteItem[j].addEventListener('click', (e) => {
+      let idToDelete = {
+        id: element[j].kanapId,
+        color: element[j].kanapColor
+      };
+      console.log(idToDelete);
+      element = element.filter( el => el.kanapId !== idToDelete.color && el.kanapColor !== idToDelete.color);
+      console.log(element);
+      localStorage.setItem("basket", JSON.stringify(element));
+
+      alert("Ce produit a été supprimé du panier");
+      window.location.href = "cart.html"
+    })
+  }
+  // displayProduct();
 }
+// function supprimerArticle(deleteItem) {
+//   console.log(deleteItem);
+//   for (let j = 0;j < deleteItem.length; j++) {
+//     deleteItem[j].addEventListener("click", (e) => {
+//       e.preventDefault();
+//       console.log(e);
+//     })
+//   }
+// }
+// function ecouteChange() {
+//   // sélection des boutons supprimer
 
-
-
+//   for (let j = 0;j < deleteItem.length;j++) {
+//     deleteItem[j].addEventListener("change", (e) => {
+//       console.log(e);
+//     })
+//   }
+// } 
 
 // function modifBasket(tag) {
 //   basketKanaps = JSON.parse(localStorage.getItem("basket"));
@@ -57,10 +103,12 @@ function calcul(kanap) {
 //   localStorage.setItem("basket", JSON.stringify(newBasket));
 // } 
 // quantityselected.addEventListener('change', (e) => {
-//   if (e.target.value >= 1) {
-
+//   if (e.target.value < 1) {
+//     suppBasket()
+//   } else {
+//     modifBasket()
 //   }
-// }
+// })
 
 // fonction de la creation de page panier d'après le contenu du localstorage
 function creatBasket(local, api) {
@@ -82,7 +130,7 @@ function creatBasket(local, api) {
   cartItemContentTitlePrice.setAttribute('class', 'cart__item__content__title');
 
   let h2 = document.createElement('h2');
-  h2.textContent = api.name + `(${local.colorSelected})`;
+  h2.textContent = api.name + ` (${local.colorSelected})`;
 
   let pPrice = document.createElement('p');
   pPrice.textContent = api.price + " €";
@@ -105,8 +153,6 @@ function creatBasket(local, api) {
   numberInput.setAttribute('value', local.qty);
   numberInput.unitPrice = api.price;
 
-
-
   let cartItemContentSettingsDelete = document.createElement('div');
   cartItemContentSettingsDelete.setAttribute('class', 'cart__item__content__settings__delete');
 
@@ -115,7 +161,6 @@ function creatBasket(local, api) {
   pDelete.textContent = 'Supprimer';
 
   let cartItem = document.getElementById('cart__items');
-
 
   cartItem.appendChild(article);
   article.appendChild(cartItemImg);
@@ -131,41 +176,7 @@ function creatBasket(local, api) {
   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
   cartItemContentSettingsDelete.appendChild(pDelete);
   
-  // totalQuantity.textContent = parseInt(initialQuantity) + parseInt(selectedQuantity)
-
-  //   totalQuantity.textContent += number(item.kanapQuantity);
-  // console.log(document.querySelectorAll('input[type="number"]'));
 };
-// let newQuantity; 
-// console.log(basket);
-// basket.forEach(elem => {
-//   newQuantity = selectedQuantity + elem.kanapQuantity;
-//   console.log(elem.kanapQuantity);
-// });
-// for (let i = 0; i < basket.length; i++) {
-//   if (newQuantity == 0) {
-//     let selectedQuantity = basket[i].kanapQuantity
-//     newQuantity = basket[i].kanapQuantity
-//   }
-// }
-
-// fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
-//   kanaps.map(kanap => {
-    // console.log(kanap);
-
-// basket.forEach(elem => {
-//   if (elem.kanapId == kanap._id) {
-//     creatBasket(elem, kanap)
-//         // console.log(elem);
-//       }
-//     })
-//   })
-// });
-
-
-
-
-
 
 
 
@@ -245,17 +256,16 @@ inputs.forEach((input) => {
     }
   });
 });
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  console.log(e.target);
-  // e.forEach(input => {
-  //   if (input == true) {
-  //     console.log(input);
-  //   }
-  // })
-  // if (firstName && lastName && address && city && email) {
-  //   console.log(data);
-  //  } else {
-  //    console.log('erreur');
-  //  }
-});
+// form.addEventListener('submit', (e) => {
+//   e.preventDefault();
+//   console.log(e.target);
+//   // e.forEach(input => {
+//   //   if (input == true) {
+//   //     console.log(input);
+//   //   }
+//   // })
+//   // if (firstName && lastName && address && city && email) {
+//   //   console.log(data);
+//   //  } else {
+//   //    console.log('erreur');
+//   // 
