@@ -13,32 +13,24 @@ function getBasket() {
     h1.textContent = "Votre panier est vide"
     return false;
   }
-  displayProduct();
-
-  // return JSON.parse(localStorage.getItem("basket"));
+  displayProduct(stockProduct);
 } 
 getBasket();
-// lancement de la recupération dans la variable basket
-// console.log(basket);
 
-function displayProduct() {
-  let basket = JSON.parse(localStorage.getItem("basket"));
-  let products = [];
+
+// lancement de la recupération dans la variable basket
+function displayProduct(basket) {
   for (let i in basket) {
       fetch('http://localhost:3000/api/products/' + basket[i].kanapId).then((res) => res.json()).then((kanap) => {
         kanap.qty = basket[i].kanapQuantity;
         kanap.colorSelected = basket[i].kanapColor;
-        products.push(kanap);
-        creatBasket(products[i], kanap)
+        creatBasket(kanap)
         calcul(kanap);
 
-        supprimerArticle(basket);
-      // console.log(products[i]);
-      // supprimerArticle(deleteItem);
+        // supprimerArticle(basket);
     });
   }
 };
-// let quantitySelected = document.querySelectorAll('input[type="number"]');
 
 
 // declaration de la fontion de calcul du panier
@@ -47,22 +39,12 @@ function calcul(kanap) {
   let totPrice = 0;
   let totQuantity = 0;
   quantitySelected.forEach(e => {
-    totPrice += parseInt(kanap.price) * parseInt(e.value);
+    totPrice += parseInt(kanap.price.value) * parseInt(e.value);
     totQuantity += parseInt(e.value);
     calculTot(totPrice, totQuantity)
   });
-  // ecoute on change
-  quantitySelected.forEach(event => {
-    event.addEventListener('change', (changeE) => {
-      // console.log(event.value);
-      // console.log(changeE);
-      totPrice += parseInt(kanap.price) * parseInt(event.value);
-      totQuantity += parseInt(event.value)
-      console.log(totPrice);
-      console.log(totQuantity);
-    })
-  })
 };
+
 // calcul des totaux
 function calculTot(price, quantity){
   let totalPrice = document.getElementById("totalPrice")
@@ -73,30 +55,35 @@ function calculTot(price, quantity){
 
 
 // declaration de la fonction supprimer l'article
-function supprimerArticle(element) {
-  let deleteItem = document.querySelectorAll(".deleteItem");
-  // console.log(deleteItem);
-  for (let j = 0; j < deleteItem.length; j++){
-    deleteItem[j].addEventListener('click', (e) => {
-      let idToDelete = {
-        id: element[j].kanapId,
-        color: element[j].kanapColor
-      };
-      // console.log(idToDelete);
-      element = element.filter( el => el.kanapId !== idToDelete.color && el.kanapColor !== idToDelete.color);
-      // console.log(element);
-      localStorage.setItem("basket", JSON.stringify(element));
-
-      alert("Ce produit a été supprimé du panier");
-      window.location.href = "cart.html"
-    })
-  }
+function supprimerArticle(event, kanap) {
+  let deleteItem = event.target;
+  let idToDelete = {
+    id: deleteItem.idProduct,
+    color: deleteItem.colorSelected
+  };
+  let basket = JSON.parse(localStorage.getItem("basket"));
+  basket = basket.filter( el => el.kanapId !== idToDelete.color && el.kanapColor !== idToDelete.color);
+  localStorage.setItem("basket", JSON.stringify(basket));
+  alert("Ce produit a été supprimé du panier");
+  deleteItem.closest(".cart__item").remove();
+  calcul()
 }
-// function basketCheck();
 
-// function modifBasket(local) {
-//   let newBasket = basketCheck(local, tag);
-// } 
+
+function modifBasket(event) {
+  let inputNum = event.target;
+  if (inputNum.value < 1) {
+    alert("Quantité de produit non conforme");
+    inputNum.value = inputNum.actualQuantity;
+    return false;
+  } 
+  let basket = JSON.parse(localStorage.getItem("basket"));
+  basket.forEach((elem, index) => {
+    if (elem.kanapId == inputNum.idProduct && elem.kanapColor == inputNum.colorSelected) {
+      calcul();
+    }
+  });
+} 
 // quantityselected.addEventListener('change', (e) => {
 //   if (e.target.value < 1) {
 //     suppBasket()
@@ -107,10 +94,10 @@ function supprimerArticle(element) {
 // })
 
 // fonction de la creation de page panier d'après le contenu du localstorage
-function creatBasket(local, api) {
+function creatBasket(api) {
   let article = document.createElement('article');
   article.setAttribute('class', 'cart__item');
-  article.setAttribute('data-id', local.kanapId);
+  article.setAttribute('data-id', api._id);
 
   let cartItemImg = document.createElement('div');
   cartItemImg.setAttribute('class', 'cart__item__img');
@@ -126,7 +113,7 @@ function creatBasket(local, api) {
   cartItemContentTitlePrice.setAttribute('class', 'cart__item__content__title');
 
   let h2 = document.createElement('h2');
-  h2.textContent = api.name + ` (${local.colorSelected})`;
+  h2.textContent = api.name + ` (${api.colorSelected})`;
 
   let pPrice = document.createElement('p');
   pPrice.textContent = api.price + " €";
@@ -146,8 +133,14 @@ function creatBasket(local, api) {
   numberInput.setAttribute('name', 'itemQantity');
   numberInput.setAttribute('min', '1');
   numberInput.setAttribute('max', '100');
-  numberInput.setAttribute('value', local.qty);
+  numberInput.setAttribute('value', api.qty);
   numberInput.unitPrice = api.price;
+  numberInput.actualQuantity = api.qty;
+  numberInput.colorSelected = api.colorSelected;
+  numberInput.idProduct = api._id;
+  numberInput.addEventListener('change', (e) => {
+    modifBasket(e);
+  });
 
   let cartItemContentSettingsDelete = document.createElement('div');
   cartItemContentSettingsDelete.setAttribute('class', 'cart__item__content__settings__delete');
@@ -155,6 +148,11 @@ function creatBasket(local, api) {
   let pDelete = document.createElement('p');
   pDelete.setAttribute('class', 'deleteItem');
   pDelete.textContent = 'Supprimer';
+  pDelete.idProduct = api._id;
+  pDelete.colorSelected = api.colorSelected;
+  pDelete.addEventListener('click', (e) => {
+    supprimerArticle(e);
+  })
 
   let cartItem = document.getElementById('cart__items');
 
