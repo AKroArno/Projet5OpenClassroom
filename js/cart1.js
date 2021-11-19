@@ -59,7 +59,7 @@ function calculTot(price, quantity){
 };
 
 // declaration de la fonction supprimer l'article
-function supprimerArticle(event, kanap) {
+function supprimerArticle(event) {
   let deleteItem = event.target;
   let idToDelete = {
     id: deleteItem.idProduct,
@@ -81,21 +81,18 @@ function modifBasket(event) {
     return false;
   } 
   // let basket = JSON.parse(localStorage.getItem("basket"));
-  basket.forEach((elem, index) => {
+  basket.forEach((elem) => {
     if (elem.kanapId == inputNum.idProduct && elem.kanapColor == inputNum.colorSelected) {
       inputNum.actualQuantity = inputNum.value;
+      elem.kanapQuantity = inputNum.value
       calculChange(inputNum.unitPrice);
+      return basket;
     }
   });
+  localStorage.setItem("basket", JSON.stringify(basket));
+
+  console.log(basket);
 } 
-// quantityselected.addEventListener('change', (e) => {
-//   if (e.target.value < 1) {
-//     suppBasket()
-//   } else {
-//     modifBasket()
-//   }
-//   localStorage.setItem("basket", JSON.stringify(newBasket));
-// })
 
 // fonction de la creation de page panier d'après le contenu du localstorage
 function creatBasket(api) {
@@ -158,7 +155,6 @@ function creatBasket(api) {
   pDelete.addEventListener('click', (e) => {
     supprimerArticle(e);
     calculChange(numberInput.unitPrice);
-
   })
 
   let cartItem = document.getElementById('cart__items');
@@ -176,7 +172,6 @@ function creatBasket(api) {
   cartItemContentSettingsQuantity.appendChild(numberInput);
   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
   cartItemContentSettingsDelete.appendChild(pDelete);
-  
 };
 
 let form = document.querySelector('form');
@@ -187,7 +182,7 @@ let inputs = document.querySelectorAll('input[type="text"], input[type="email"]'
 
 
 function errorMsg(id, message, valid) {
-  // const container = document.getElementById(id);
+  const container = document.getElementById(id);
   // console.log(id);
   const errorText = document.getElementById(id + 'ErrorMsg');
   if(!valid) {
@@ -228,13 +223,13 @@ function emailChecker(value) {
   return false;
 };
 
-let data = {
-  firstName: firstName,
-  lastName: lastName,
-  address: address,
-  city: city,
-  email: email,
-};
+// let data = {
+//   firstName: firstName,
+//   lastName: lastName,
+//   address: address,
+//   city: city,
+//   email: email,
+// };
 
 // inputs.forEach((input) => {
 //   input.addEventListener('input', (e) =>{
@@ -284,10 +279,10 @@ order.addEventListener("click", (e) => {
 
 
   // faire un objet avec les donnés du panier et les data
-  let toSend = {
-    basket,
-    data
-  }
+  // let toSend = {
+  //   basket,
+  //   data
+  // }
   // console.log(toSend);
 
   }
