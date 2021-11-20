@@ -174,11 +174,11 @@ function creatBasket(api) {
   cartItemContentSettingsDelete.appendChild(pDelete);
 };
 
-let form = document.querySelector('form');
+// let form = document.querySelector('form');
 let inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
-// console.log(inputs);
+// // console.log(inputs);
 // let firstName, lastName, address, city, email;
-// console.log(form);
+// // console.log(form);
 
 
 function errorMsg(id, message, valid) {
@@ -202,10 +202,9 @@ function nameChecker(value, tag, name) {
   }
   return false;
 };
-function adressChecker(value) {
+function adressChecker(value, valid) {
   if (!value.match(/^[a-zA-Z0-9-]+$/)) {
-    errorMsg('adress', 'adresse invalide', false);
-    // address = null;
+    errorMsg('address', 'adresse invalide', false);
   } else {
     errorMsg('address', "", true);
     return true;
@@ -223,65 +222,71 @@ function emailChecker(value) {
   return false;
 };
 
-// let data = {
-//   firstName: firstName,
-//   lastName: lastName,
-//   address: address,
-//   city: city,
-//   email: email,
-// };
-
-// inputs.forEach((input) => {
-//   input.addEventListener('input', (e) =>{
-//     switch (e.target.id) {
-//       case 'firstName':
-//         nameChecker(e.target.value, "prenom", "firstName")
-//         break;
-//       case 'lastName':
-//         nameChecker(e.target.value, "nom", "lastName")
-//         break;
-//       case 'adress':
-//         adressChecker(e.target.value)
-//         break;
-//       case 'city':
-//         nameChecker(e.target.value, "ville", "city")
-//         break;
-//       case 'email':
-//         emailChecker(e.target.value)
-//         break;
-//     }
-//   });
-// });
+// console.log(basket);
+inputs.forEach((input) => {
+  input.addEventListener('input', (e) =>{
+    switch (e.target.id) {
+      case 'firstName':
+        nameChecker(e.target.value, "prenom", "firstName");
+        // firstName = e.target.value;
+        break;
+      case 'lastName':
+        nameChecker(e.target.value, "nom", "lastName");
+        // lastName = e.target.value;
+        break;
+      case 'address':
+        adressChecker(e.target.value);
+        // address = e.target.value;
+        break;
+      case 'city':
+        nameChecker(e.target.value, "ville", "city")
+        // city = e.target.value;
+        break;
+      case 'email':
+        emailChecker(e.target.value)
+        // email = e.target.value
+        break;
+      // default
+    };
+  });
+});
 
 
 // Selection du bouton envoyer le formulaire
 let order = document.querySelector("#order");
-let first = document.querySelector("#firstName").value;
-let last = document.querySelector("#lastName").value;
-let town = document.querySelector("#city").value;
-let street = document.querySelector("#address").value;
-let lien = document.querySelector("#email").value;
+let first = document.querySelector("#firstName");
+let last = document.querySelector("#lastName");
+let town = document.querySelector("#city");
+let street = document.querySelector("#address");
+let lien = document.querySelector("#email");
+console.log(first);
+console.log(last);
+console.log(town);
+console.log(street);
+console.log(lien);
+
+// console.log(basket);
 
 order.addEventListener("click", (e) => {
   e.preventDefault();
   // récupération des valeurs du formulaire
-  let data = {
+  let contact = {
   firstName: document.querySelector("#firstName").value,
   lastName: document.querySelector("#lastName").value,
   address: document.querySelector("#address").value,
   city: document.querySelector("#city").value,
   email: document.querySelector("#email").value,
   };
-
+  console.log(contact);
   if(nameChecker(first, "prenom", "firstName"), nameChecker(last, "nom", "lastName"), nameChecker(town, "ville", "city"), adressChecker(street), emailChecker(lien)) {
-      // mettre data dans localStorage
-  localStorage.setItem("data", JSON.stringify(data));
+  //     // mettre data dans localStorage
+  localStorage.setItem("contact", JSON.stringify(contact));
 
 
   // faire un objet avec les donnés du panier et les data
   // let toSend = {
-  //   basket,
-  //   data
+  //   contact{},
+  //   produits[]
   // }
   // console.log(toSend);
 
@@ -290,7 +295,7 @@ order.addEventListener("click", (e) => {
 });
 
 // gardrer le contenu du local storage dans le formulaire
-let dataLocal = JSON.parse(localStorage.getItem("data"));
+let dataLocal = JSON.parse(localStorage.getItem("contact"));
 
 function getInputValues(input) {
   document.querySelector(`#${input}`).value = dataLocal[input];
