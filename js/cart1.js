@@ -39,13 +39,15 @@ function calcul(kanap) {
   });
 };
 
-function calculChange(price, quantity) {
+function calculChange(price) {
   let quantitySelected = document.querySelectorAll('input[type="number"]');
   let newTotPrice = 0;
   let newTotQuantity = 0;
   quantitySelected.forEach(e => {
     newTotPrice += parseInt(price) * parseInt(e.value);
+    console.log(newTotPrice);
     newTotQuantity += parseInt(e.value);
+    console.log(newTotQuantity);
     calculTot(newTotPrice, newTotQuantity)
   });
 };
@@ -65,7 +67,6 @@ function supprimerArticle(event) {
     id: deleteItem.idProduct,
     color: deleteItem.colorSelected
   };
-  // let basket = JSON.parse(localStorage.getItem("basket"));
   basket = basket.filter( el => el.kanapId !== idToDelete.color && el.kanapColor !== idToDelete.color);
   localStorage.setItem("basket", JSON.stringify(basket));
   alert("Ce produit a été supprimé du panier");
@@ -80,11 +81,10 @@ function modifBasket(event) {
     inputNum.value = inputNum.actualQuantity;
     return false;
   } 
-  // let basket = JSON.parse(localStorage.getItem("basket"));
   basket.forEach((elem) => {
     if (elem.kanapId == inputNum.idProduct && elem.kanapColor == inputNum.colorSelected) {
       inputNum.actualQuantity = inputNum.value;
-      elem.kanapQuantity = inputNum.value
+      elem.kanapQuantity = inputNum.value; 
       calculChange(inputNum.unitPrice);
       return basket;
     }
@@ -177,13 +177,10 @@ function creatBasket(api) {
 // let form = document.querySelector('form');
 let inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
 // // console.log(inputs);
-// let firstName, lastName, address, city, email;
-// // console.log(form);
 
 
 function errorMsg(id, message, valid) {
   const container = document.getElementById(id);
-  // console.log(id);
   const errorText = document.getElementById(id + 'ErrorMsg');
   if(!valid) {
     errorText.textContent = message;
@@ -253,17 +250,17 @@ inputs.forEach((input) => {
 
 
 // Selection du bouton envoyer le formulaire
-let order = document.querySelector("#order");
-let first = document.querySelector("#firstName");
-let last = document.querySelector("#lastName");
-let town = document.querySelector("#city");
-let street = document.querySelector("#address");
-let lien = document.querySelector("#email");
-console.log(first);
-console.log(last);
-console.log(town);
-console.log(street);
-console.log(lien);
+// let order = document.querySelector("#order");
+// let first = document.querySelector("#firstName");
+// let last = document.querySelector("#lastName");
+// let town = document.querySelector("#city");
+// let street = document.querySelector("#address");
+// let lien = document.querySelector("#email");
+// console.log(first);
+// console.log(last);
+// console.log(town);
+// console.log(street);
+// console.log(lien);
 
 // console.log(basket);
 
@@ -278,9 +275,7 @@ order.addEventListener("click", (e) => {
   email: document.querySelector("#email").value,
   };
   console.log(contact);
-  if(nameChecker(first, "prenom", "firstName"), nameChecker(last, "nom", "lastName"), nameChecker(town, "ville", "city"), adressChecker(street), emailChecker(lien)) {
-  //     // mettre data dans localStorage
-  localStorage.setItem("contact", JSON.stringify(contact));
+  // if(nameChecker(first, "prenom", "firstName"), nameChecker(last, "nom", "lastName"), nameChecker(town, "ville", "city"), adressChecker(street), emailChecker(lien)) {
 
 
   // faire un objet avec les donnés du panier et les data
@@ -295,20 +290,13 @@ order.addEventListener("click", (e) => {
 });
 
 // gardrer le contenu du local storage dans le formulaire
-let dataLocal = JSON.parse(localStorage.getItem("contact"));
+// let dataLocal = JSON.parse(localStorage.getItem("contact"));
 
-function getInputValues(input) {
-  document.querySelector(`#${input}`).value = dataLocal[input];
-}
-getInputValues("firstName");
-getInputValues("lastName");
-getInputValues("address");
-getInputValues("city");
-getInputValues("email");
-
-
-// if (/^[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ]{2,20}$/.test(prenom)) {
-//   console.log('ok');
-// } else {
-//   console.log('ko');
+// function getInputValues(input) {
+//   document.querySelector(`#${input}`).value = dataLocal[input];
 // }
+// getInputValues("firstName");
+// getInputValues("lastName");
+// getInputValues("address");
+// getInputValues("city");
+// getInputValues("email");

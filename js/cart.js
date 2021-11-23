@@ -39,13 +39,14 @@ function calcul(kanap) {
   });
 };
 
-function calculChange(price, quantity) {
+function calculChange(price) {
   let quantitySelected = document.querySelectorAll('input[type="number"]');
   let newTotPrice = 0;
   let newTotQuantity = 0;
   quantitySelected.forEach(e => {
     newTotPrice += parseInt(price) * parseInt(e.value);
     newTotQuantity += parseInt(e.value);
+
     calculTot(newTotPrice, newTotQuantity)
   });
 };
@@ -84,7 +85,7 @@ function modifBasket(event) {
   basket.forEach((elem) => {
     if (elem.kanapId == inputNum.idProduct && elem.kanapColor == inputNum.colorSelected) {
       inputNum.actualQuantity = inputNum.value;
-      elem.kanapQuantity = inputNum.value
+      elem.kanapQuantity = parseInt(inputNum.value); 
       calculChange(inputNum.unitPrice);
       return basket;
     }
@@ -233,33 +234,44 @@ order.addEventListener("click", (e) => {
   };
   console.log(contact);
   // if(nameChecker(), adressChecker(), emailChecker()) {
-    console.log(  nameChecker(e.target.value, "prénom", "firstNameErroeMsg"), nameChecker(e.target.value, "nom", "lastNameErroeMsg"),  nameChecker(e.target.value, 'ville', 'cityErrorMsg'), adressChecker(), emailChecker());
+    // console.log(  nameChecker(e.target.value, "prénom", "firstNameErroeMsg"), nameChecker(e.target.value, "nom", "lastNameErroeMsg"),  nameChecker(e.target.value, 'ville', 'cityErrorMsg'), adressChecker(), emailChecker());
   //     // mettre data dans localStorage
-  localStorage.setItem("contact", JSON.stringify(contact));
-
+  // localStorage.setItem("contact", JSON.stringify(contact));
+  let arrayProducts = [];
+  basket.forEach((product) => {
+    arrayProducts.push(product.kanapId)
+  });
+  // console.log(arrayProducts);
 
   // faire un objet avec les donnés du panier et les data
-  // let toSend = {
-  //   contact{},
-  //   produits[]
-  // }
-  // console.log(toSend);
+  let toSend = {
+    contact,
+    arrayProducts
+  }
+  console.log(toSend);
 
-  // }
-
+  // envoie de l'objet toSend vers le serveur
+  let promise = fetch("https://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(toSend),
+    headers: {
+      "content-Type" : "application/json"
+    }
+  });
+  // console.log(promise);
 });
 
 // gardrer le contenu du local storage dans le formulaire
-let dataLocal = JSON.parse(localStorage.getItem("contact"));
+// let dataLocal = JSON.parse(localStorage.getItem("contact"));
 
-function getInputValues(input) {
-  document.querySelector(`#${input}`).value = dataLocal[input];
-}
-getInputValues("firstName");
-getInputValues("lastName");
-getInputValues("address");
-getInputValues("city");
-getInputValues("email");
+// function getInputValues(input) {
+//   document.querySelector(`#${input}`).value = dataLocal[input];
+// }
+// getInputValues("firstName");
+// getInputValues("lastName");
+// getInputValues("address");
+// getInputValues("city");
+// getInputValues("email");
 
 
 function errorMsg(id, message, valid) {

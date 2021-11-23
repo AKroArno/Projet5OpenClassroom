@@ -57,16 +57,6 @@ function basketCheck(basket, kanap) {
   return basket;
 };
 
-// fonction comfirmation pop up
-function popupComfirm () {
-  if (window.confirm( `le produit a bien été ajouté au panier
-  Consulter le panier OK ou revenir à l'acceuil ANNULER`)){
-    window.location.href = "cart.html"
-  }else{
-    window.location.href = "index.html"
-  }
-}
-
 // definition de la fonction d'ajout au panier
 function addBasket (tag) {
   if (!localStorage.getItem("basket")) {
@@ -74,12 +64,12 @@ function addBasket (tag) {
     basketKanaps.push(tag);
     //transformation en format JSON et l'envoyer dans le localStorage 
     localStorage.setItem("basket", JSON.stringify(basketKanaps));
-    popupComfirm();
+    alert('Le produit a bien été ajouté au panier');
   } else {
     basketKanaps = JSON.parse(localStorage.getItem("basket"));
     let newBasket = basketCheck(basketKanaps, tag);
     localStorage.setItem("basket", JSON.stringify(newBasket));
-    popupComfirm();
+    alert('Le produit a bien été ajouté au panier');
   }
 };
 // evenement au click sur ajouter au panier
