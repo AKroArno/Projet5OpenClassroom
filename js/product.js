@@ -48,7 +48,7 @@ function creatPage (tag) {
   let addToCart = document.getElementById('addToCart');
   // evenement au click sur ajouter au panier
   addToCart.addEventListener('click', () => {
-    addProducts(tag_id);
+    addProducts(tag._id);
   });
 }
 

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initPage() {
   let params = new URLSearchParams(window.location.search);
   if (params.get("orderId") !== null) {
-    const elem = document.getElementById('order');
+    const elem = document.getElementById('orderID');
     elem.textContent = params.get('orderID');
     return false
   }
@@ -18,6 +18,7 @@ function initPage() {
 function getBasket() {
   let stockProduct = JSON.parse(localStorage.getItem("basket"));
   if(stockProduct === null || stockProduct == 0) {
+    let h1 = document.querySelector('h1');
     h1.textContent = "Votre panier est vide"
     return false;
   }
@@ -41,13 +42,16 @@ function getLocalStorage() {
   return JSON.parse(localStorage.getItem("basket"));
 }
 
-// declaration de la fontion de calcul du panier
+// déclaration de la fontion de calcul du panier
 function calcul(kanap) {
   let quantitySelected = document.querySelectorAll('input[type="number"]');
   let totPrice = 0;
   let totQuantity = 0;
   quantitySelected.forEach(e => {
-    totPrice += parseInt(kanap.price) * parseInt(e.value);
+    totPrice = totPrice + (kanap.price * e.value);
+    // console.log(kanap.price);
+    // console.log(e.value);
+    // console.log(totPrice);
     totQuantity += parseInt(e.value);
     calculTot(totPrice, totQuantity)
   });
@@ -59,10 +63,10 @@ function calculChange(price) {
   let newTotPrice = 0;
   let newTotQuantity = 0;
   quantitySelected.forEach(e => {
-    newTotPrice += parseInt(price) * parseInt(e.value);
+    newTotPrice += price * e.value;
+    console.log(newTotPrice);
     newTotQuantity += parseInt(e.value);
-
-    calculTot(newTotPrice, newTotQuantity)
+    calculTot(newTotPrice, newTotQuantity);
   });
 };
 
@@ -90,6 +94,7 @@ function supprimerArticle(event) {
 
 // déclaration de la fonction pour la modification de la quantité qui modifie le contenu de la quantité dans le localStorage
 function modifBasket(event) {
+  let basket = getLocalStorage();
   let inputNum = event.target;
   if (inputNum.value < 1) {
     alert("Quantité de produit non conforme");
@@ -193,10 +198,12 @@ function creatBasket(api) {
   order.addEventListener('click', (e) => {
     e.preventDefault();
     sendOrder();
+    // console.log(sendOrder());
   });
-  formCheaker();
+  formChecker();
 };
 
+// console.log(document.getElementById("address"));
 // déclaration de la fonction qui crée l'objet à retourner à l'api contenant l'objet contact et l'array des ID produits du panier
 function sendOrder() {
   // récupération des valeurs du formulaire en objet 'contact'
@@ -208,43 +215,50 @@ function sendOrder() {
     email: ''
   };
 
-  let firstName = document.querySelector("#firstName").value;
+  let firstName = document.getElementById("firstName").value;
+  console.log(firstName);
   if(!nameChecker(firstName, "prénom", "firstNameErrorMsg")) {
     return false;
   } 
   contact.firstName = firstName;
 
-  let lastName = document.querySelector("#lastName").value;
+  let lastName = document.getElementById("lastName").value;
+  console.log('lastName');
+  console.log(lastName);
   if(!nameChecker(lastName, "prénom", "lastNameErrorMsg")) {
     return false;
   }
   contact.lastName = lastName;
   
-  let address = document.querySelector("#address").value;
-  if(!adressChecker(address, 'adresse', 'adressErrorMsg')) {
+  let address = document.getElementById("address").value;
+  console.log(address);
+  if(!addressChecker(address)) {
     return false;
   }
   contact.address = address;
+  console.log(contact);
   
-  let city  = document.querySelector("#city").value;
+  let city  = document.getElementById("city").value;
+  console.log(city);
   if(!nameChecker(city, 'ville', 'cityErrorMsg')) {
     return false;
   }
   contact.city = city;
+  // console.log(city);
+
   
-  let email = document.querySelector("#email").value;
-  if(!emailChecker(email, 'email', 'emailErrorMsg')) {
+  let email = document.getElementById("email").value;
+  console.log(email);
+  if(!emailChecker(email)) {
     return false;
   }
   contact.email = email;
-
-  localStorage.setItem("contact", JSON.stringify(contact));
-
   console.log(contact);
-  // if(nameChecker(), adressChecker(), emailChecker()) {
-    // console.log(  nameChecker(e.target.value, "prénom", "firstNameErroeMsg"), nameChecker(e.target.value, "nom", "lastNameErroeMsg"),  nameChecker(e.target.value, 'ville', 'cityErrorMsg'), adressChecker(), emailChecker());
-  //     // mettre data dans localStorage
+
   // localStorage.setItem("contact", JSON.stringify(contact));
+  // console.log(contact);
+
+  // console.log(contact);
   let products = [];
   let basket = getLocalStorage();
   basket.forEach((product) => {
@@ -261,11 +275,11 @@ function sendOrder() {
 
   // envoie de l'objet toSend vers le serveur
   fetch("https://localhost:3000/api/products/order", {
-  method: "POST",
-  body: JSON.stringify(toSend),
-  headers: {
-    "content-Type" : "application/json"
-  }
+    method: "POST",
+    body: JSON.stringify(toSend),
+    headers: {
+      "content-Type" : "application/json"
+    }
   })
   .then((res) => res.json())
     // exploitation de la réponse en JSON
@@ -275,7 +289,7 @@ function sendOrder() {
     let urlcourante = document.location.href;
     urlcourante = urlcourante.replace('cart.html', '');
 
-    let confirm = 'confirmation.html?orederID='+ data.orderID;
+    let confirm = 'confirmation.html?orderID='+ data.orderID;
     let url = urlcourante + confirm;
     window.location = url;
   });
@@ -283,6 +297,7 @@ function sendOrder() {
 
 // définition de la fonction qui affiche le message d'erreur
 function errorMsg(id, message, valid) {
+  // console.log(id);
   let elem = document.getElementById(id);
   if(!valid) {
     elem.textContent = message;
@@ -292,13 +307,15 @@ function errorMsg(id, message, valid) {
 }
 
 // déclaration de la fonction de controle du formulaire
-function formCheaker() {
+function formChecker() {
   let first = document.querySelector("#firstName");
+  // console.log(first);
   let last = document.querySelector("#lastName");
   let town = document.querySelector("#city");
   let street = document.querySelector("#address");
   let lien = document.querySelector("#email");
   first.addEventListener('input', (e) => {
+    // console.log(e.target.value);
     nameChecker(e.target.value, "prénom", "firstNameErrorMsg");
   });
   last.addEventListener('input', (e) => {
@@ -308,7 +325,7 @@ function formCheaker() {
     nameChecker(e.target.value, 'ville', 'cityErrorMsg');
   });
   street.addEventListener('input', (e) => {
-    adressChecker(e.target.value);
+    addressChecker(e.target.value);
   });
   lien.addEventListener('input', (e) => {
     emailChecker(e.target.value);
@@ -318,20 +335,20 @@ function formCheaker() {
 // test regExp email
 function emailChecker(result) {
   if (!(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i).test(result)) {
-    errorMsg('email', 'adresse mail invalide', false);
+    errorMsg('emailErrorMsg', 'adresse mail invalide', false);
   } else {
-    errorMsg('email', "", true);
+    errorMsg('emailErrorMsg', "", true);
     return true;
   }
   return false;
 }
 
 // test regExp adresse
-function adressChecker(result) {
-  if (!(/^[a-zA-Z0-9-]+$/).test(result)) {
-      errorMsg('address', 'adresse invalide', false);
+function addressChecker(result) {
+  if (!(/^[a-zA-Z0-9- ]+$/i).test(result)) {
+    errorMsg('addressErrorMsg', 'adresse invalide', false);
   } else {
-    errorMsg('address', "", true);
+    errorMsg('addressErrorMsg', "", true);
     return true;
   }
   return false;
@@ -339,6 +356,7 @@ function adressChecker(result) {
 
 // test regExp nom, prénom, ville
 function nameChecker(result, tag, inputName) {
+  // console.log(inputName);
   if (result.length >= 0 && (result.length < 2 || result.length > 20)) {
     errorMsg(inputName, `Veuillez entrée un ${tag} valide`, false);
   } else if (!(/^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._\s-]+$/).test(result)) {
