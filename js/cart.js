@@ -214,7 +214,7 @@ function sendOrder() {
   } 
   contact.firstName = firstName;
 
-  let lastName = document.querySelector("#lastName").valu;
+  let lastName = document.querySelector("#lastName").value;
   if(!nameChecker(lastName, "prénom", "lastNameErrorMsg")) {
     return false;
   }
