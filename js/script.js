@@ -1,3 +1,18 @@
+// chargement  document HTML initial quand chargé et analysé
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+});
+
+// chargement du contenu de l'api
+function init() {
+  fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
+    kanaps.map(kanap => {
+      creatKanaps(kanap);
+    });
+  });
+}
+
+// déclaration de le fonction de création de la page dynamique
 function creatKanaps (tag) {
   let a = document.createElement('a');
   a.setAttribute('href', `./product.html?id=${tag._id}`);
@@ -25,13 +40,4 @@ function creatKanaps (tag) {
 
   h3.textContent = tag.name;
   p.textContent = tag.description;
-
 }
-
-
-fetch('http://localhost:3000/api/products').then((res) => res.json()).then((kanaps) => {
-  kanaps.map(kanap => {
-    creatKanaps(kanap);
-  });
-}); 
-

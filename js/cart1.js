@@ -1,7 +1,6 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
 
 let h1 = document.querySelector('h1')
-// console.log(localStorage.getItem("basket"));
 // création de la fonction de récupération du localstorage
 function getBasket() {
   let stockProduct = JSON.parse(localStorage.getItem("basket"));
@@ -45,9 +44,8 @@ function calculChange(price) {
   let newTotQuantity = 0;
   quantitySelected.forEach(e => {
     newTotPrice += parseInt(price) * parseInt(e.value);
-    console.log(newTotPrice);
     newTotQuantity += parseInt(e.value);
-    console.log(newTotQuantity);
+
     calculTot(newTotPrice, newTotQuantity)
   });
 };
@@ -67,6 +65,7 @@ function supprimerArticle(event) {
     id: deleteItem.idProduct,
     color: deleteItem.colorSelected
   };
+  // let basket = JSON.parse(localStorage.getItem("basket"));
   basket = basket.filter( el => el.kanapId !== idToDelete.color && el.kanapColor !== idToDelete.color);
   localStorage.setItem("basket", JSON.stringify(basket));
   alert("Ce produit a été supprimé du panier");
@@ -84,7 +83,7 @@ function modifBasket(event) {
   basket.forEach((elem) => {
     if (elem.kanapId == inputNum.idProduct && elem.kanapColor == inputNum.colorSelected) {
       inputNum.actualQuantity = inputNum.value;
-      elem.kanapQuantity = inputNum.value; 
+      elem.kanapQuantity = parseInt(inputNum.value); 
       calculChange(inputNum.unitPrice);
       return basket;
     }
@@ -174,52 +173,13 @@ function creatBasket(api) {
   cartItemContentSettingsDelete.appendChild(pDelete);
 };
 
+
+// gestion du formulaire
+
+
 // let form = document.querySelector('form');
 let inputs = document.querySelectorAll('input[type="text"], input[type="email"]');
-// // console.log(inputs);
-
-
-function errorMsg(id, message, valid) {
-  const container = document.getElementById(id);
-  const errorText = document.getElementById(id + 'ErrorMsg');
-  if(!valid) {
-    errorText.textContent = message;
-  } else {
-    errorText.textContent = "";
-  }
-};
-function nameChecker(value, tag, name) {
-  if (value.length >= 0 && (value.length < 2 || value.length > 20)){
-    errorMsg(name, `Veuillez entrée un  ${tag}  valide`, false);
-  } else if (!value.match(/^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._\s-]+$/)) {
-    errorMsg(name, `Le ${tag} ne doit pas contenir de caractères spéciaux`, false);
-  } else {
-    errorMsg(name, "", true);
-    return true;
-  }
-  return false;
-};
-function adressChecker(value, valid) {
-  if (!value.match(/^[a-zA-Z0-9-]+$/)) {
-    errorMsg('address', 'adresse invalide', false);
-  } else {
-    errorMsg('address', "", true);
-    return true;
-  }
-  return false;
-};
-function emailChecker(value) {
-  if (!value.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
-    errorMsg('email', 'adresse mail invalide', false);
-    // email = null;
-  } else {
-    errorMsg('email', "", true);
-    return true;
-  }
-  return false;
-};
-
-// console.log(basket);
+// // console.log(basket);
 inputs.forEach((input) => {
   input.addEventListener('input', (e) =>{
     switch (e.target.id) {
@@ -250,12 +210,12 @@ inputs.forEach((input) => {
 
 
 // Selection du bouton envoyer le formulaire
-// let order = document.querySelector("#order");
-// let first = document.querySelector("#firstName");
-// let last = document.querySelector("#lastName");
-// let town = document.querySelector("#city");
-// let street = document.querySelector("#address");
-// let lien = document.querySelector("#email");
+let order = document.querySelector("#order");
+let first = document.querySelector("#firstName");
+let last = document.querySelector("#lastName");
+let town = document.querySelector("#city");
+let street = document.querySelector("#address");
+let lien = document.querySelector("#email");
 // console.log(first);
 // console.log(last);
 // console.log(town);
@@ -275,18 +235,32 @@ order.addEventListener("click", (e) => {
   email: document.querySelector("#email").value,
   };
   console.log(contact);
-  // if(nameChecker(first, "prenom", "firstName"), nameChecker(last, "nom", "lastName"), nameChecker(town, "ville", "city"), adressChecker(street), emailChecker(lien)) {
-
+  // if(nameChecker(), adressChecker(), emailChecker()) {
+    // console.log(  nameChecker(e.target.value, "prénom", "firstNameErroeMsg"), nameChecker(e.target.value, "nom", "lastNameErroeMsg"),  nameChecker(e.target.value, 'ville', 'cityErrorMsg'), adressChecker(), emailChecker());
+  //     // mettre data dans localStorage
+  // localStorage.setItem("contact", JSON.stringify(contact));
+  let arrayProducts = [];
+  basket.forEach((product) => {
+    arrayProducts.push(product.kanapId)
+  });
+  // console.log(arrayProducts);
 
   // faire un objet avec les donnés du panier et les data
-  // let toSend = {
-  //   contact{},
-  //   produits[]
-  // }
+  let toSend = {
+    contact,
+    arrayProducts
+  }
   // console.log(toSend);
 
-  }
-
+  // envoie de l'objet toSend vers le serveur
+  let promise = fetch("https://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(toSend),
+    headers: {
+      "content-Type" : "application/json"
+    }
+  });
+  // console.log(promise);
 });
 
 // gardrer le contenu du local storage dans le formulaire
@@ -300,3 +274,65 @@ order.addEventListener("click", (e) => {
 // getInputValues("address");
 // getInputValues("city");
 // getInputValues("email");
+
+
+function errorMsg(id, message, valid) {
+  if(!valid) {
+    id.textContent = message;
+  } else {
+    id.textContent = "";
+  }
+};
+// first.addEventListener('input', (e) => {
+//   nameChecker(e.target.value, "prénom", "firstNameErrorMsg");
+//   console.log('ok');
+// });
+// last.addEventListener('input', (e) => {
+//   nameChecker(e.target.value, "nom", "lastNameErrorMsg");
+// });
+// town.addEventListener('input', (e) => {
+//   nameChecker(e.target.value, 'ville', 'cityErrorMsg');
+// });
+// street.addEventListener('input', (e) => {
+//   adressChecker(e.target.value);
+// });
+// lien.addEventListener('input', (e) => {
+//   emailChecker(e.target.value);
+// });
+
+function emailChecker(result) {
+  // if (!(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i).test(result)) {
+    if (!result.match(/^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i)) {
+    errorMsg('email', 'adresse mail invalide', false);
+  } else {
+    errorMsg('email', "", true);
+    return true;
+  }
+  return false;
+};
+
+function adressChecker(result) {
+  // if (!(/^[a-zA-Z0-9-]+$/).test(result)) {
+    if (!result.match(/^[a-zA-Z0-9-]+$/)) {
+      errorMsg('address', 'adresse invalide', false);
+  } else {
+    errorMsg('address', "", true);
+    return true;
+  }
+  return false;
+};
+
+
+function nameChecker(result, tag, inputName) {
+  if (result.length >= 0 && (result.length < 2 || result.length > 20)) {
+    errorMsg(inputName, `Veuillez entrée un ${tag} valide`, false);
+  // } else if (!(/^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._\s-]+$/).test(result)) {
+  } else if (!result.match(/^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._\s-]+$/)) {
+    errorMsg(inputName, `Le ${tag} ne doit pas contenir de caractères spéciaux`, false);
+  } else {
+    errorMsg(inputName, "", true);
+    // console.log('ko');
+    return true
+  }
+  return false
+}
