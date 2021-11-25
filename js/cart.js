@@ -48,7 +48,7 @@ function calcul(kanap) {
   let totPrice = 0;
   let totQuantity = 0;
   quantitySelected.forEach(e => {
-    totPrice = totPrice + (kanap.price * e.value);
+    totPrice += parseInt(kanap.price) * parseInt(e.value);
     // console.log(kanap.price);
     // console.log(e.value);
     // console.log(totPrice);
@@ -64,9 +64,8 @@ function calculChange(price) {
   let newTotQuantity = 0;
   quantitySelected.forEach(e => {
     newTotPrice += price * e.value;
-    console.log(newTotPrice);
     newTotQuantity += parseInt(e.value);
-    calculTot(newTotPrice, newTotQuantity);
+    calculTot(newTotPrice, newTotQuantity)
   });
 };
 
@@ -110,7 +109,7 @@ function modifBasket(event) {
     }
   });
   localStorage.setItem("basket", JSON.stringify(basket));
-  console.log(basket);
+  // console.log(basket);
 } 
 
 // fonction de la création dynamique de page panier d'après le contenu du localstorage
@@ -274,7 +273,7 @@ function sendOrder() {
   console.log(toSend);
 
   // envoie de l'objet toSend vers le serveur
-  fetch("https://localhost:3000/api/products/order", {
+  fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     body: JSON.stringify(toSend),
     headers: {

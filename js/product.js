@@ -43,12 +43,21 @@ function creatPage (tag) {
   tag.colors.forEach(color => {
     let option = new Option(color,color);
     colorsKanap.append(option);
+    // console.log(option);
   });
 
   let addToCart = document.getElementById('addToCart');
   // evenement au click sur ajouter au panier
   addToCart.addEventListener('click', () => {
-    addProducts(tag._id);
+    console.log(colorsKanap.value);
+    let quantity = document.getElementById('quantity');
+    console.log(quantity.value);
+    if (colorsKanap.value == '' || quantity.value < 1) {
+      alert('Veuillez entrer une couleur et une quantité');
+      return false;
+    } else {
+      addProducts(tag._id);
+    }
   });
 }
 
