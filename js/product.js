@@ -20,7 +20,7 @@ function getProduct(id) {
   });
 }
 
-// création dynamique de la page en fonction du contenu du localStorage
+// création dynamique de la page en fonction de l'id selectionné
 function creatPage (tag) {
   let kanapImg = document.createElement('img');
   kanapImg.setAttribute('src', tag.imageUrl);
@@ -49,9 +49,7 @@ function creatPage (tag) {
   let addToCart = document.getElementById('addToCart');
   // evenement au click sur ajouter au panier
   addToCart.addEventListener('click', () => {
-    console.log(colorsKanap.value);
     let quantity = document.getElementById('quantity');
-    console.log(quantity.value);
     if (colorsKanap.value == '' || quantity.value < 1) {
       alert('Veuillez entrer une couleur et une quantité');
       return false;

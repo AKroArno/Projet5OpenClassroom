@@ -259,7 +259,7 @@ function sendOrder() {
     contact,
     products
   }
-  console.log(toSend);
+  // console.log(toSend);
 
   // envoie de l'objet toSend vers le serveur
   fetch("http://localhost:3000/api/products/order", {
